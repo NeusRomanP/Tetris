@@ -1,0 +1,26 @@
+body{
+  background-color: #333;
+}
+
+#app{
+  max-width: 600px;
+  width: 90%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+}
+
+.row{
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 5px;
+}
+
+.cell{
+  border: 2px solid white;
+  aspect-ratio: 1;
+}
+
+.piece-part{
+  background-color: white;
+}
