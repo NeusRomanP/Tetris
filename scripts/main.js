@@ -64,13 +64,14 @@ function updateBoard(){
 function moveRight(){
   let canMove = true;
   for(let i = 1; i <= 4; i++){
-    piece[`pos${i}`].forEach(piecePart => {
+    piece[`pos${position}`].forEach(piecePart => {
       if(piecePart[1] === 9){
         canMove = false;
       }
     });
-  
-    if(canMove){
+  }
+  if(canMove){
+    for(let i = 1; i <= 4; i++){
       piece[`pos${i}`].forEach(piecePart => {
         piecePart[1]++;
       });
@@ -82,13 +83,14 @@ function moveRight(){
 function moveLeft(){
   let canMove = true;
   for(let i = 1; i <= 4; i++){
-    piece[`pos${i}`].forEach(piecePart => {
+    piece[`pos${position}`].forEach(piecePart => {
       if(piecePart[1] === 0){
         canMove = false;
       }
     });
-  
-    if(canMove){
+  }
+  if(canMove){
+    for(let i = 1; i <= 4; i++){
       piece[`pos${i}`].forEach(piecePart => {
         piecePart[1]--;
       });
@@ -98,13 +100,48 @@ function moveLeft(){
 }
 
 function rotate(){
+
   if(position < 4){
     position++;
   }else{
     position = 1;
   }
 
+
   updateBoard();
+
+
+  let canRotate = false;
+  while(!canRotate){
+    canRotate = true;
+    let canRotateRight = true;
+    let canRotateLeft = true;
+
+    piece[`pos${position}`].forEach(piecePart => {
+      if(piecePart[1] > 9){
+        canRotate = false;
+        canRotateRight = false;
+      }
+      if(piecePart[1] < 0){
+        canRotate = false;
+        canRotateLeft = false;
+      }
+    });
+
+    piece[`pos${position}`].forEach(piecePart => {
+      if(!canRotateRight){
+        piecePart[1]--;
+      }
+      if(!canRotateLeft){
+        piecePart[1]++;
+      }
+    });
+
+    updateBoard();
+
+  }
+
+  
 }
 
 
