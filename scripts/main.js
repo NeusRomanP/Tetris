@@ -4,6 +4,8 @@ const board = [];
 let position = 1;
 let currentPiece = 'l';
 
+let bottom = [];
+
 let pieces = {
   'l': {
     'pos1' : [[0, 0], [1, 0], [1, 1], [1, 2]],
@@ -34,6 +36,7 @@ function printBoard(){
 
       node.appendChild(cellElement);
       row.push(hasPiece);
+      bottom.push([9, i]);
 
     }
     app.appendChild(node);
@@ -99,6 +102,25 @@ function moveLeft(){
   updateBoard();
 }
 
+function moveDown(){
+  let canMove = true;
+  for(let i = 1; i <= 4; i++){
+    piece[`pos${position}`].forEach(piecePart => {
+      if(piecePart[0] === bottom[piecePart[1]][0]){
+        canMove = false;
+      }
+    });
+  }
+  if(canMove){
+    for(let i = 1; i <= 4; i++){
+      piece[`pos${i}`].forEach(piecePart => {
+        piecePart[0]++;
+      });
+    }
+  }
+  updateBoard();
+}
+
 function rotate(){
 
   if(position < 4){
@@ -107,15 +129,14 @@ function rotate(){
     position = 1;
   }
 
-
   updateBoard();
-
 
   let canRotate = false;
   while(!canRotate){
     canRotate = true;
     let canRotateRight = true;
     let canRotateLeft = true;
+    let canRotateBottom = true;
 
     piece[`pos${position}`].forEach(piecePart => {
       if(piecePart[1] > 9){
@@ -126,6 +147,10 @@ function rotate(){
         canRotate = false;
         canRotateLeft = false;
       }
+      if(piecePart[0] > bottom[piecePart[1]][0]){
+        canRotate = false;
+        canRotateBottom = false;
+      }
     });
 
     piece[`pos${position}`].forEach(piecePart => {
@@ -134,6 +159,9 @@ function rotate(){
       }
       if(!canRotateLeft){
         piecePart[1]++;
+      }
+      if(!canRotateBottom){
+        piecePart[0]--;
       }
     });
 
@@ -152,6 +180,8 @@ window.addEventListener('keydown', (e) => {
     moveRight();
   }else if(e.code === 'ArrowLeft'){
     moveLeft();
+  }else if(e.code === 'ArrowDown'){
+    moveDown();
   }else if(e.code === 'Space'){
     rotate();
   }
