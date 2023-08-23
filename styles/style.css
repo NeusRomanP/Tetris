@@ -24,3 +24,7 @@ body{
 .piece-part{
   background-color: white;
 }
+
+.bottom-part{
+  background-color: #999;
+}

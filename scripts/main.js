@@ -3,6 +3,7 @@ const board = [];
 
 let position = 1;
 let currentPiece = 'l';
+let pieceToEnd = false;
 
 let bottom = [];
 
@@ -15,7 +16,7 @@ let pieces = {
   }
 }
 
-let piece = pieces.l;
+let piece = JSON.parse(JSON.stringify(pieces.l));
 
 function printBoard(){
   for(let i = 0; i < 10; i++){
@@ -36,7 +37,7 @@ function printBoard(){
 
       node.appendChild(cellElement);
       row.push(hasPiece);
-      bottom.push([9, i]);
+      bottom.push([10, i]);
 
     }
     app.appendChild(node);
@@ -53,11 +54,18 @@ function updateBoard(){
       let hasPiece = false;
 
       cellElement.classList.remove('piece-part');
+      cellElement.classList.remove('bottom-part');
 
       piece[`pos${position}`].forEach(piecePart => {
         if(piecePart[0] === i && piecePart[1] === j){
           hasPiece = true;
           cellElement.classList.add('piece-part');
+        }
+      });
+
+      bottom.forEach(bottomCell => {
+        if(bottomCell[0] === i && bottomCell[1] === j){
+          cellElement.classList.add('bottom-part');
         }
       });
     }
@@ -68,7 +76,10 @@ function moveRight(){
   let canMove = true;
   for(let i = 1; i <= 4; i++){
     piece[`pos${position}`].forEach(piecePart => {
-      if(piecePart[1] === 9){
+      let bottomCoincidences = bottom.filter(bottomPart => {
+        return bottomPart[0] === piecePart[0] && bottomPart[1] - 1 === piecePart[1]
+      })
+      if(piecePart[1] === 9 || bottomCoincidences.length > 0){
         canMove = false;
       }
     });
@@ -87,7 +98,10 @@ function moveLeft(){
   let canMove = true;
   for(let i = 1; i <= 4; i++){
     piece[`pos${position}`].forEach(piecePart => {
-      if(piecePart[1] === 0){
+      let bottomCoincidences = bottom.filter(bottomPart => {
+        return bottomPart[0] === piecePart[0] && bottomPart[1] + 1 === piecePart[1]
+      })
+      if(piecePart[1] === 0 || bottomCoincidences.length > 0){
         canMove = false;
       }
     });
@@ -106,7 +120,10 @@ function moveDown(){
   let canMove = true;
   for(let i = 1; i <= 4; i++){
     piece[`pos${position}`].forEach(piecePart => {
-      if(piecePart[0] === bottom[piecePart[1]][0]){
+      let bottomCoincidences = bottom.filter(bottomPart => {
+        return bottomPart[0] - 1  === piecePart[0] && bottomPart[1] === piecePart[1]
+      })
+      if(piecePart[0] === bottom[piecePart[1]][0] - 1 || bottomCoincidences.length > 0){
         canMove = false;
       }
     });
@@ -117,6 +134,8 @@ function moveDown(){
         piecePart[0]++;
       });
     }
+  }else{
+    pieceToEnd = true;
   }
   updateBoard();
 }
@@ -168,21 +187,55 @@ function rotate(){
     updateBoard();
 
   }
-
-  
 }
 
+function updateBottom(){
+  piece[`pos${position}`].forEach(piecePart => {
+    bottom.push(piecePart);
+  });
+
+  updateBoard();
+}
+
+function spawnNewPiece(){
+  pieceToEnd = false;
+  piece = JSON.parse(JSON.stringify(pieces.l));
+  clearInterval(interval);
+  interval = setInterval(() => {
+    if(!pieceToEnd){
+      moveDown();
+    }else{
+      updateBottom();
+      spawnNewPiece();
+    }
+    
+  }, 1000);
+}
 
 printBoard();
 
 window.addEventListener('keydown', (e) => {
-  if(e.code === 'ArrowRight'){
-    moveRight();
-  }else if(e.code === 'ArrowLeft'){
-    moveLeft();
-  }else if(e.code === 'ArrowDown'){
-    moveDown();
-  }else if(e.code === 'Space'){
-    rotate();
+  if(!pieceToEnd){
+    if(e.code === 'ArrowRight'){
+      moveRight();
+    }else if(e.code === 'ArrowLeft'){
+      moveLeft();
+    }else if(e.code === 'ArrowDown'){
+      moveDown();
+    }else if(e.code === 'Space'){
+      rotate();
+    }
+  }else{
+    updateBottom();
   }
 })
+
+let interval = setInterval(() => {
+  if(!pieceToEnd){
+    moveDown();
+  }else{
+    updateBottom();
+    spawnNewPiece();
+  }
+  
+}, 1000);
