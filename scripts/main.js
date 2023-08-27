@@ -1,9 +1,13 @@
+//TODO:
+//fix when new piece appears doesn't display first frame
+
 const app = document.getElementById('app');
 const board = [];
 
 let position = 1;
 let currentPiece = 'l';
 let pieceToEnd = false;
+let hasToRemoveRow = false;
 
 let bottom = [];
 
@@ -37,9 +41,9 @@ function printBoard(){
 
       node.appendChild(cellElement);
       row.push(hasPiece);
-      bottom.push([10, i]);
-
     }
+
+    bottom.push([10, i]);
     app.appendChild(node);
     board.push(row);
   }
@@ -123,7 +127,7 @@ function moveDown(){
       let bottomCoincidences = bottom.filter(bottomPart => {
         return bottomPart[0] - 1  === piecePart[0] && bottomPart[1] === piecePart[1]
       })
-      if(piecePart[0] === bottom[piecePart[1]][0] - 1 || bottomCoincidences.length > 0){
+      if(bottom[piecePart[1]] && piecePart[0] === bottom[piecePart[1]][0] - 1 || bottomCoincidences.length > 0){
         canMove = false;
       }
     });
@@ -136,6 +140,7 @@ function moveDown(){
     }
   }else{
     pieceToEnd = true;
+    hasToRemoveRow = true;
   }
   updateBoard();
 }
@@ -191,7 +196,13 @@ function rotate(){
 
 function updateBottom(){
   piece[`pos${position}`].forEach(piecePart => {
-    bottom.push(piecePart);
+    let containsPos = bottom.some(bottomPart => {
+      return bottomPart[0] === piecePart[0] && bottomPart[1] === piecePart[1];
+    })
+    if(!containsPos){
+      bottom.push(piecePart);
+    }
+    
   });
 
   updateBoard();
@@ -206,10 +217,71 @@ function spawnNewPiece(){
       moveDown();
     }else{
       updateBottom();
+      if(hasToRemoveRow){
+        updateBoard();
+        removeRow();
+      }
       spawnNewPiece();
     }
     
   }, 1000);
+}
+
+function removeRow(){
+  for(let i = 0; i < 10; i++){
+    let isRowComplete = false;
+    let hasColumns = [];
+    let bottomToRemove = [];
+    let partsRow = bottom.filter(bottomPart =>{
+      return bottomPart[0] === i && bottomPart[0] !== 10;
+    })
+    
+    let stringArray = partsRow.map(JSON.stringify);
+    let uniqueStringArray = new Set(stringArray);
+    let partsRowDuplicatesRemoved = Array.from(uniqueStringArray, JSON.parse);
+
+
+    let columns = partsRowDuplicatesRemoved.map(part =>{
+      return part[0] === i ? part[1] : false;
+    })
+    
+    for(let j = 0; j < 10; j++){
+      hasColumns.push(columns.includes(j));
+    }
+
+    if(hasColumns.length >= 10){
+      isRowComplete = hasColumns.every(hasColumn => {
+        return hasColumn === true;
+      })
+    }
+
+
+    if(isRowComplete){
+      for(let j = 0; j < 10; j++){
+        bottomToRemove.push(partsRowDuplicatesRemoved.filter(columnPart => {
+          return columnPart[1] === j;
+        }))
+      }
+    }
+
+    if (isRowComplete) {
+      bottom = bottom.filter((bottomPart) => {
+        return !(bottomPart[0] === i && columns.includes(bottomPart[1]));
+      });
+
+      updateBoard();
+      hasToRemoveRow = false;
+      moveBottomDown(i);
+    }
+  }
+}
+
+function moveBottomDown(i){
+  bottom.forEach(bottomPart => {
+    if(bottomPart[0] <= i){
+      bottomPart[0]++;
+    }
+  });
 }
 
 printBoard();
@@ -233,9 +305,13 @@ window.addEventListener('keydown', (e) => {
 let interval = setInterval(() => {
   if(!pieceToEnd){
     moveDown();
+    
   }else{
     updateBottom();
+    if(hasToRemoveRow){
+      updateBoard();
+      removeRow();
+    }
     spawnNewPiece();
   }
-  
 }, 1000);
