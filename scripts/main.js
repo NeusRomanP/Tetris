@@ -9,8 +9,7 @@ const modalPoints = document.getElementById('modal-points');
 
 let board = [];
 
-let position = 1;
-let currentPiece = 'l';
+let position = getRandomPosition();
 let pieceToEnd = false;
 let hasToRemoveRow = false;
 let endGame = false;
@@ -19,15 +18,51 @@ let points = 0;
 let bottom = [];
 
 let pieces = {
-  'l': {
+  'piece0': {//L invert
     'pos1' : [[0, 0], [1, 0], [1, 1], [1, 2]],
     'pos2' : [[0, 0], [0, 1], [1, 0], [2, 0]],
     'pos3' : [[0, 0], [0, 1], [0, 2], [1, 2]],
     'pos4' : [[0, 1], [1, 1], [2, 1], [2, 0]]
+  },
+  'piece1': {//L
+    'pos1' : [[0, 2], [1, 0], [1, 1], [1, 2]],
+    'pos2' : [[0, 0], [1, 0], [2, 0], [2, 1]],
+    'pos3' : [[0, 0], [0, 1], [0, 2], [1, 0]],
+    'pos4' : [[0, 1], [1, 1], [2, 1], [0, 0]]
+  },
+  'piece2': {//Z
+    'pos1' : [[0, 0], [0, 1], [1, 1], [1, 2]],
+    'pos2' : [[0, 1], [1, 0], [1, 1], [2, 0]],
+    'pos3' : [[0, 0], [0, 1], [1, 1], [1, 2]],
+    'pos4' : [[0, 1], [1, 0], [1, 1], [2, 0]]
+  },
+  'piece3': {//Z invert
+    'pos1' : [[0, 1], [0, 2], [1, 0], [1, 1]],
+    'pos2' : [[0, 0], [1, 0], [1, 1], [2, 1]],
+    'pos3' : [[0, 1], [0, 2], [1, 0], [1, 1]],
+    'pos4' : [[0, 0], [1, 0], [1, 1], [2, 1]]
+  },
+  'piece4': {//T
+    'pos1' : [[0, 0], [0, 1], [0, 2], [1, 1]],
+    'pos2' : [[0, 1], [1, 0], [1, 1], [2, 1]],
+    'pos3' : [[0, 1], [1, 0], [1, 1], [1, 2]],
+    'pos4' : [[0, 0], [1, 0], [2, 0], [1, 1]]
+  },
+  'piece5': {//I
+    'pos1' : [[0, 0], [0, 1], [0, 2], [0, 3]],
+    'pos2' : [[0, 0], [1, 0], [2, 0], [3, 0]],
+    'pos3' : [[0, 0], [0, 1], [0, 2], [0, 3]],
+    'pos4' : [[0, 0], [1, 0], [2, 0], [3, 0]]
+  },
+  'piece6': {//square
+    'pos1' : [[0, 0], [0, 1], [1, 0], [1, 1]],
+    'pos2' : [[0, 0], [0, 1], [1, 0], [1, 1]],
+    'pos3' : [[0, 0], [0, 1], [1, 0], [1, 1]],
+    'pos4' : [[0, 0], [0, 1], [1, 0], [1, 1]]
   }
 }
 
-let piece = JSON.parse(JSON.stringify(pieces.l));
+let piece = JSON.parse(JSON.stringify(pieces[`piece${getRandomPiece()}`]));
 
 function printBoard(){
   for(let i = 0; i < 10; i++){
@@ -232,7 +267,8 @@ function updateBottom(){
 
 function spawnNewPiece(){
   pieceToEnd = false;
-  piece = JSON.parse(JSON.stringify(pieces.l));
+  position = getRandomPosition();
+  piece = JSON.parse(JSON.stringify(pieces[`piece${getRandomPiece()}`]));
   clearInterval(interval);
   interval = setInterval(() => {
     if(!endGame){
@@ -334,13 +370,14 @@ function newGame(){
 function restartGame(){
   board = [];
 
-  position = 1;
-  currentPiece = 'l';
+  position = getRandomPosition();
   pieceToEnd = false;
   hasToRemoveRow = false;
   endGame = false;
   points = 0;
   bottom = [];
+
+  piece = JSON.parse(JSON.stringify(pieces[`piece${getRandomPiece()}`]));
 
   pointsText.innerHTML = points;
   modalPoints.innerHTML = points;
@@ -348,10 +385,20 @@ function restartGame(){
   for(let i = 0; i < 10; i++){
     bottom.push([10, i]);
   }
-  
+
   updateBoard();
   spawnNewPiece();
 }
+
+function getRandomPiece(){
+  let piecesNum = Object.keys(pieces).length;
+  return Math.floor(Math.random() * piecesNum);
+}
+
+function getRandomPosition(){
+  return Math.floor(Math.random() * 4) + 1;
+}
+
 
 printBoard();
 
