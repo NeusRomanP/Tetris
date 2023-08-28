@@ -153,8 +153,6 @@ function rotate(){
     position = 1;
   }
 
-  updateBoard();
-
   let canRotate = false;
   while(!canRotate){
     canRotate = true;
@@ -162,32 +160,49 @@ function rotate(){
     let canRotateLeft = true;
     let canRotateBottom = true;
 
+
     piece[`pos${position}`].forEach(piecePart => {
-      if(piecePart[1] > 9){
+
+      let isOnBottom = bottom.some(bottomPart => {
+        return piecePart[0] === bottomPart[0] && piecePart[1] === bottomPart[1];
+      })
+
+      if(piecePart[1] > 9 || isOnBottom){
         canRotate = false;
         canRotateRight = false;
       }
-      if(piecePart[1] < 0){
+      if(piecePart[1] < 0 ||isOnBottom){
         canRotate = false;
         canRotateLeft = false;
       }
-      if(piecePart[0] > bottom[piecePart[1]][0]){
+      if(isOnBottom){
         canRotate = false;
         canRotateBottom = false;
       }
     });
 
-    piece[`pos${position}`].forEach(piecePart => {
-      if(!canRotateRight){
-        piecePart[1]--;
+    let canRotateHorizontal = canRotateLeft || canRotateRight;
+
+    if(canRotateHorizontal){
+      piece[`pos${position}`].forEach(piecePart => {
+
+        if(!canRotateRight){
+          piecePart[1]--;
+        }
+        if(!canRotateLeft){
+          piecePart[1]++;
+        }
+        if(!canRotateBottom){
+          piecePart[0]--;
+        }
+      });
+    }else{
+      if(position > 0){
+        position--;
+      }else{
+        position = 4;
       }
-      if(!canRotateLeft){
-        piecePart[1]++;
-      }
-      if(!canRotateBottom){
-        piecePart[0]--;
-      }
-    });
+    }
 
     updateBoard();
 
