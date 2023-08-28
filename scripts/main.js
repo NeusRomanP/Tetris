@@ -4,7 +4,10 @@
 //add pieces
 
 const app = document.getElementById('app');
-const board = [];
+const modal = document.getElementById('modal');
+const newGameButton = document.getElementById('new-game');
+
+let board = [];
 
 let position = 1;
 let currentPiece = 'l';
@@ -248,7 +251,7 @@ function spawnNewPiece(){
     }else{
       updateBottom();
       updateBoard();
-      console.log("You lost");
+      modal.showModal();
       clearInterval(interval);
     }
   }, 1000);
@@ -314,10 +317,32 @@ function moveBottomDown(i){
 function checkEnd(){
   endGame = piece[`pos${position}`].some(part => {
     return bottom.some(bottomPart =>{
-      return bottomPart[0] === part[0] && bottomPart[1] === part[1]
-    })
-  })
+      return bottomPart[0] === part[0] && bottomPart[1] === part[1];
+    });
+  });
+}
+
+function newGame(){
+  modal.close();
+  restartGame();
+
+}
+
+function restartGame(){
+  board = [];
+
+  position = 1;
+  currentPiece = 'l';
+  pieceToEnd = false;
+  hasToRemoveRow = false;
+  endGame = false;
+  bottom = [];
+
+  for(let i = 0; i < 10; i++){
+    bottom.push([10, i]);
+  }
   
+  spawnNewPiece();
 }
 
 printBoard();
@@ -353,6 +378,10 @@ let interval = setInterval(() => {
       checkEnd();
     }
   }else{
-    console.log("you lost");
+    modal.showModal();
   }
 }, 1000);
+
+newGameButton.addEventListener('click', () => {
+  newGame();
+})
