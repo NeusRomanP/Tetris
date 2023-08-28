@@ -1,6 +1,7 @@
 //TODO:
-//end game
-//fix bug on rotate
+//end game modal
+//points on delete row
+//add pieces
 
 const app = document.getElementById('app');
 const board = [];
@@ -9,6 +10,8 @@ let position = 1;
 let currentPiece = 'l';
 let pieceToEnd = false;
 let hasToRemoveRow = false;
+
+let endGame = false;
 
 let bottom = [];
 
@@ -229,18 +232,25 @@ function spawnNewPiece(){
   piece = JSON.parse(JSON.stringify(pieces.l));
   clearInterval(interval);
   interval = setInterval(() => {
-    if(!pieceToEnd){
-      moveDown();
+    if(!endGame){
+      if(!pieceToEnd){
+        moveDown();
+      }else{
+        updateBottom();
+        if(hasToRemoveRow){
+          updateBoard();
+          removeRow();
+        }
+        spawnNewPiece();
+        checkEnd();
+      }
+      updateBoard();
     }else{
       updateBottom();
-      if(hasToRemoveRow){
-        updateBoard();
-        removeRow();
-      }
-      spawnNewPiece();
+      updateBoard();
+      console.log("You lost");
+      clearInterval(interval);
     }
-    updateBoard();
-    
   }, 1000);
 }
 
@@ -301,6 +311,15 @@ function moveBottomDown(i){
   });
 }
 
+function checkEnd(){
+  endGame = piece[`pos${position}`].some(part => {
+    return bottom.some(bottomPart =>{
+      return bottomPart[0] === part[0] && bottomPart[1] === part[1]
+    })
+  })
+  
+}
+
 printBoard();
 
 window.addEventListener('keydown', (e) => {
@@ -320,15 +339,20 @@ window.addEventListener('keydown', (e) => {
 })
 
 let interval = setInterval(() => {
-  if(!pieceToEnd){
-    moveDown();
-    
-  }else{
-    updateBottom();
-    if(hasToRemoveRow){
-      updateBoard();
-      removeRow();
+  if(!endGame){
+    if(!pieceToEnd){
+      moveDown();
+      
+    }else{
+      updateBottom();
+      if(hasToRemoveRow){
+        updateBoard();
+        removeRow();
+      }
+      spawnNewPiece();
+      checkEnd();
     }
-    spawnNewPiece();
+  }else{
+    console.log("you lost");
   }
 }, 1000);
