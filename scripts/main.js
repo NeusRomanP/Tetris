@@ -1,5 +1,6 @@
 //TODO:
-//fix when rotate piece can overlap others/bottom
+//end game
+//fix bug on rotate
 
 const app = document.getElementById('app');
 const board = [];
@@ -197,7 +198,7 @@ function rotate(){
         }
       });
     }else{
-      if(position > 0){
+      if(position > 1){
         position--;
       }else{
         position = 4;
