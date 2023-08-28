@@ -1,5 +1,5 @@
 //TODO:
-//fix when new piece appears doesn't display first frame
+//fix when rotate piece can overlap others/bottom
 
 const app = document.getElementById('app');
 const board = [];
@@ -223,6 +223,7 @@ function spawnNewPiece(){
       }
       spawnNewPiece();
     }
+    updateBoard();
     
   }, 1000);
 }
