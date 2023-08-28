@@ -1,6 +1,4 @@
 //TODO:
-//end game modal
-//points on delete row
 //add pieces
 
 const app = document.getElementById('app');
@@ -351,6 +349,7 @@ function restartGame(){
     bottom.push([10, i]);
   }
   
+  updateBoard();
   spawnNewPiece();
 }
 
