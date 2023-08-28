@@ -1,6 +1,3 @@
-//TODO:
-//add pieces
-
 const app = document.getElementById('app');
 const modal = document.getElementById('modal');
 const newGameButton = document.getElementById('new-game');
