@@ -6,6 +6,8 @@
 const app = document.getElementById('app');
 const modal = document.getElementById('modal');
 const newGameButton = document.getElementById('new-game');
+const pointsText = document.getElementById('points');
+const modalPoints = document.getElementById('modal-points');
 
 let board = [];
 
@@ -13,8 +15,8 @@ let position = 1;
 let currentPiece = 'l';
 let pieceToEnd = false;
 let hasToRemoveRow = false;
-
 let endGame = false;
+let points = 0;
 
 let bottom = [];
 
@@ -302,6 +304,9 @@ function removeRow(){
       updateBoard();
       hasToRemoveRow = false;
       moveBottomDown(i);
+      points++;
+      pointsText.innerHTML = points;
+      modalPoints.innerHTML = points;
     }
   }
 }
@@ -336,7 +341,11 @@ function restartGame(){
   pieceToEnd = false;
   hasToRemoveRow = false;
   endGame = false;
+  points = 0;
   bottom = [];
+
+  pointsText.innerHTML = points;
+  modalPoints.innerHTML = points;
 
   for(let i = 0; i < 10; i++){
     bottom.push([10, i]);
