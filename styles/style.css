@@ -1,5 +1,29 @@
 body{
   background-color: #333;
+  color: white;
+  text-align: center;
+}
+
+h1{
+  margin-bottom: 0;
+}
+
+h3{
+  margin-top: 0;
+}
+
+dialog{
+  background-color: black;
+  border: 2px solid white;
+  color: white;
+  width: 400px;
+  max-width: 90%;
+}
+
+dialog button{
+  background-color: #333;
+  border: 2px solid white;
+  color: white;
 }
 
 #app{
@@ -8,6 +32,7 @@ body{
   display: grid;
   grid-template-columns: 1fr;
   gap: 5px;
+  margin: auto;
 }
 
 .row{
