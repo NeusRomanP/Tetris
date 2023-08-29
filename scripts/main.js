@@ -4,6 +4,11 @@ const newGameButton = document.getElementById('new-game');
 const pointsText = document.getElementById('points');
 const modalPoints = document.getElementById('modal-points');
 
+const buttonLeft = document.getElementById('button-left');
+const buttonRight = document.getElementById('button-right');
+const buttonDown = document.getElementById('button-down');
+const buttonRotate = document.getElementById('button-rotate');
+
 let board = [];
 
 let position = getRandomPosition();
@@ -436,4 +441,20 @@ let interval = setInterval(() => {
 
 newGameButton.addEventListener('click', () => {
   newGame();
+})
+
+buttonLeft.addEventListener('click', () => {
+  moveLeft();
+});
+
+buttonRight.addEventListener('click', () => {
+  moveRight();
+});
+
+buttonDown.addEventListener('click', () => {
+  moveDown();
+});
+
+buttonRotate.addEventListener('click', () => {
+  rotate();
 })

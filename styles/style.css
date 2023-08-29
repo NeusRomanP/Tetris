@@ -53,3 +53,18 @@ dialog button{
 .bottom-part{
   background-color: #999;
 }
+
+
+.direction__buttons, .rotate__buttons{
+  display: flex;
+  justify-content: center;
+  width: 500px;
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px;
+}
+
+.direction__buttons div, .rotate__buttons div{
+  width: 30%;
+}
