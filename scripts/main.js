@@ -405,6 +405,7 @@ function getRandomPosition(){
 printBoard();
 
 window.addEventListener('keydown', (e) => {
+  e.preventDefault();
   if(!pieceToEnd){
     if(e.code === 'ArrowRight'){
       moveRight();
